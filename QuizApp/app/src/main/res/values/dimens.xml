@@ -2,4 +2,12 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="centerview_padding">20dp</dimen>
+
+    <!-- Font size -->
+    <dimen name="text_size_index">20sp</dimen>
+    <dimen name="text_size_result">35sp</dimen>
+    <dimen name="text_size_question">20sp</dimen>
+    <dimen name="text_size_result_description">20sp</dimen>
+
 </resources>

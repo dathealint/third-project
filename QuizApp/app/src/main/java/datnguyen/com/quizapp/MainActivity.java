@@ -3,6 +3,7 @@ package datnguyen.com.quizapp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +46,14 @@ public class MainActivity extends AppCompatActivity {
 	private TextView        tvResultDescription = null;
 	private TextView        tvResult = null;
 	private Button			btnNext = null;
+	private Button			btnWatchAnswers = null;
+
 
     ArrayList<Question>     questions = new ArrayList<>();
     private     int         currentIndex = 0;
 	private     int         correctAnswer = 0;
+
+	private     boolean     watchAnswersMode;
 
 	QuestionItemAdapter 	adapter;
 
@@ -67,6 +72,23 @@ public class MainActivity extends AppCompatActivity {
 		tvResultDescription = (TextView)findViewById(R.id.tvResultDescription);
 		tvResult = (TextView)findViewById(R.id.tvResult);
 		btnNext = (Button)findViewById(R.id.btnNext);
+		btnWatchAnswers = (Button)findViewById(R.id.btnWatchAnswers);
+
+		// handle click events
+		btnNext.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				onClickNext();
+			}
+		});
+
+		btnWatchAnswers.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				onClickWatchAnswers();
+			}
+		});
+
 
 		// setup adapter for listview checkbox group
 		adapter = new QuestionItemAdapter(this, new ArrayList<String>());
@@ -135,47 +157,40 @@ public class MainActivity extends AppCompatActivity {
 		displayQuestion(currentIndex);
 	}
 
-	public void onClickNext(View view) {
+	private void onClickWatchAnswers() {
+		watchAnswersMode = true;
+		// go home, reset value
+		startQuiz();
+	}
+
+	private void resetViewData() {
+		// clear current answer
+		adapter.setChoices(null);
+		adapter.setSelectedChoices(null);
+		adapter.notifyDataSetChanged();
+		radioGroupChoices.clearCheck();
+		txtInput.setText("");
+	}
+
+	private void onClickNext() {
 		//dismiss keyboard if showing
 		hideSoftKeyboard();
 
-		if (currentIndex < questions.size()) {
+		if (!watchAnswersMode && currentIndex < questions.size()) {
 			Question question = questions.get(currentIndex);
-
-			// check answer and count correct ones
-			// get answers
-			try {
-				HashSet<String> answers = null;
-				if (question.getType().equals(Question.Type.MULTIPLE)) {
-					answers = adapter.selectedAnswers();
-				} else if (question.getType().equals(Question.Type.SINGLE)) {
-					int selectedRadio = radioGroupChoices.getCheckedRadioButtonId();
-					String choice = question.getChoices().get(selectedRadio);
-					answers = new HashSet<>();
-					answers.add(choice);
-				} else if (question.getType().equals(Question.Type.INPUT)) {
-					answers = new HashSet<>();
-					String choice = txtInput.getText().toString().trim().toLowerCase();
-					answers.add(choice);
-				}
-
-				// check if correct, if yes increase count Correct by 1
-				boolean isCorrect = question.isCorrectAnswer(answers);
-				if (isCorrect) {
-					correctAnswer += 1;
-				}
-			} catch (Exception ex) {
-
-			} finally {
-				// clear current answer
-				adapter.clear();
-				radioGroupChoices.clearCheck();
-				txtInput.setText("");
+			// check answer
+			boolean isCorrect = question.isCorrectAnswer(currentAnswers());
+			if (isCorrect) {
+				correctAnswer += 1;
 			}
 		}
 
+		// reset current selection on views
+		resetViewData();
+
 		// increase index
 		currentIndex++;
+
 		if (currentIndex < questions.size()) {
 			displayQuestion(currentIndex);
         } else if (currentIndex == questions.size()) {
@@ -183,9 +198,34 @@ public class MainActivity extends AppCompatActivity {
 			displayResultView();
 		} else {
 			// go home, reset value
+			watchAnswersMode = false;
 			startQuiz();
 		}
     }
+
+	private HashSet<String> currentAnswers() {
+		HashSet<String> answers = null;
+		try {
+			Question question = questions.get(currentIndex);
+
+			if (question.getType().equals(Question.Type.MULTIPLE)) {
+				answers = adapter.selectedAnswers();
+			} else if (question.getType().equals(Question.Type.SINGLE)) {
+				int selectedRadio = radioGroupChoices.getCheckedRadioButtonId();
+				String choice = question.getChoices().get(selectedRadio);
+				answers = new HashSet<>();
+				answers.add(choice);
+			} else if (question.getType().equals(Question.Type.INPUT)) {
+				answers = new HashSet<>();
+				String choice = txtInput.getText().toString().trim().toLowerCase();
+				answers.add(choice);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			return answers;
+		}
+	}
 
     private void displayQuestion(int index) {
 		// check if this question is using checkbox or radio box or input
@@ -196,9 +236,9 @@ public class MainActivity extends AppCompatActivity {
 
 		if (index == questions.size() - 1) {
 			// final question, change text to Finish
-			btnNext.setText(getString(R.string.btn_Finish));
+			btnNext.setText(getString(R.string.btn_finish));
 		} else {
-			btnNext.setText(getString(R.string.btn_Next));
+			btnNext.setText(getString(R.string.btn_next));
 		}
 
 		Question question = questions.get(index);
@@ -209,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
 		radioGroupChoices.setVisibility(View.GONE);
 		txtInput.setVisibility(View.GONE);
 		lvCheckboxGroup.setVisibility(View.GONE);
+		btnWatchAnswers.setVisibility(View.GONE);
 
 		tvQuestion.setText(question.getQuestionText());
 		tvQuestionIndex.setText(String.format("%d / %d", currentIndex + 1, questions.size()));
@@ -216,18 +257,33 @@ public class MainActivity extends AppCompatActivity {
 		if (question.getType().equals(Question.Type.MULTIPLE)) {
 			// Hide radiogroup, input view, show checkbox group
 			lvCheckboxGroup.setVisibility(View.VISIBLE);
-
 			loadDataCheckboxes(question.getChoices());
+
 		} else if (question.getType().equals(Question.Type.SINGLE)) {
 			// Hide checkbox group, input view, Show radio group
 			radioGroupChoices.setVisibility(View.VISIBLE);
-
 			loadDataRadioGroup(question.getChoices());
+
 		} else if (question.getType().equals(Question.Type.INPUT)) {
 			// Hide radiogroup, checkbox group, show input view
 			txtInput.setVisibility(View.VISIBLE);
-			txtInput.setText("");
+			loadDataTextInput(question.getAnswers().toArray()[0].toString());
+
 		}
+	}
+
+	private void loadDataCheckboxes(ArrayList<String> choices) {
+		adapter.setChoices(choices);
+
+		Question question = questions.get(currentIndex);
+		// show answer if in watch answer mode
+		if (watchAnswersMode) {
+			adapter.setSelectedChoices(question.getAnswers());
+		} else {
+			adapter.setSelectedChoices(null);
+		}
+
+		adapter.notifyDataSetChanged();
 	}
 
 	private void loadDataRadioGroup(ArrayList<String> choices) {
@@ -235,6 +291,8 @@ public class MainActivity extends AppCompatActivity {
 		radioGroupChoices.removeAllViews();
 
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+
+		Question question = questions.get(currentIndex);
 
 		for(int i = 0; i < choices.size(); i++) {
 			String choice = choices.get(i);
@@ -245,13 +303,21 @@ public class MainActivity extends AppCompatActivity {
 			radioButton.setId(i);
 
 			radioGroupChoices.addView(radioButton);
-		}
 
+			// show answer if in watch answer mode
+			if (watchAnswersMode && question.getAnswers().contains(choice)) {
+				radioButton.setChecked(true);
+			}
+		}
 	}
 
-	private void loadDataCheckboxes(ArrayList<String> choices) {
-		adapter.setChoices(choices);
-		adapter.notifyDataSetChanged();
+	private void loadDataTextInput(String text) {
+		if (watchAnswersMode) {
+			txtInput.setText(text);
+		} else {
+			txtInput.setText("");
+		}
+
 	}
 
 	private void displayResultView() {
@@ -262,11 +328,19 @@ public class MainActivity extends AppCompatActivity {
 		tvQuestionIndex.setVisibility(View.GONE);
 		tvQuestion.setVisibility(View.GONE);
 
+		btnWatchAnswers.setVisibility(View.VISIBLE);
+
 		// change text to Try Again
-		btnNext.setText(getString(R.string.btn_TryAgain));
+		btnNext.setText(getString(R.string.btn_try_again));
 
 		// update text result
-		tvResult.setText(String.format("%d / %d", correctAnswer, questions.size()));
+		if (watchAnswersMode) {
+			tvResult.setText("");
+			tvResultDescription.setText(getString(R.string.txt_watch_result_completed));
+		} else {
+			tvResult.setText(String.format("%d / %d", correctAnswer, questions.size()));
+			tvResultDescription.setText(getString(R.string.txt_completed));
+		}
 	}
 
 	public void hideSoftKeyboard() {

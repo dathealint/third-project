@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="datnguyen.com.quizapp.MainActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="datnguyen.com.quizapp.MainActivity">
 
     <TextView
         android:id="@+id/tvCurrentPageIndex"
@@ -16,8 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="1 / 10"
-        android:textStyle="bold" />
+        android:text="0 / 0"
+        android:textSize="@dimen/text_size_index"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/tvQuestion"
@@ -25,25 +26,41 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvCurrentPageIndex"
         android:layout_centerHorizontal="true"
-        android:text="hello this is your question?"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_question"/>
 
-    <Button
-        android:id="@+id/btnNext"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/viewBottom"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="onClickNext"
-        android:text="@string/btn_Next" />
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_next"/>
+
+        <Button
+            android:id="@+id/btnWatchAnswers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_watch_answer"/>
+
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollChoices"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/viewBottom"
+        android:layout_below="@id/tvQuestion"
         android:fillViewport="true"
-        android:layout_above="@id/btnNext"
-        android:layout_below="@id/tvQuestion">
+        android:padding="@dimen/centerview_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,22 +70,24 @@
             <RadioGroup
                 android:id="@+id/radioGroupChoices"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal">
             </RadioGroup>
 
             <ListView
                 android:id="@+id/lvCheckboxGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
                 android:divider="@null"
                 >
-
             </ListView>
 
             <EditText
                 android:id="@+id/txtInput"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:maxLines="1"/>
 
             <LinearLayout
                 android:id="@+id/viewResult"
@@ -82,21 +101,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/txt_completed"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_size_result_description"/>
 
                 <TextView
                     android:id="@+id/tvResult"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_size_result"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-
     </ScrollView>
-
-
 
 </RelativeLayout>

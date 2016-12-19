@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Harry Porter Quiz</string>
-    <string name="btn_Next">Next</string>
-    <string name="btn_Finish">Finish</string>
-    <string name="btn_TryAgain">Try Again</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_watch_answer">See Answers</string>
+    <string name="btn_finish">Finish</string>
+    <string name="btn_try_again">Try Again</string>
     <string name="txt_completed">Congrats! Here is your result:</string>
+    <string name="txt_watch_result_completed">Not too hard, isn\'t it? :D\nGive it another try?</string>
 
 </resources>

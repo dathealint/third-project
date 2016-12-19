@@ -17,17 +17,26 @@ import java.util.HashSet;
 
 public class QuestionItemAdapter extends ArrayAdapter<String> {
 
+	public void setSelectedChoices(HashSet<String> choices) {
+		if (choices != null) {
+			selectedChoices = choices;
+		} else {
+			selectedChoices = new HashSet<>();
+		}
+	}
+
 	private HashSet<String> selectedChoices;
 
 	public void setChoices(ArrayList<String> choices) {
 		clear();
-		addAll(choices);
-		this.selectedChoices = new HashSet<>();
+		if (choices != null) {
+			addAll(choices);
+		}
 	}
 
 	public QuestionItemAdapter(Context context, ArrayList<String>list) {
 		super(context, R.layout.question_item_row, list);
-		setChoices(list);
+		setSelectedChoices(null);
 	}
 
 	@Override
@@ -48,23 +57,27 @@ public class QuestionItemAdapter extends ArrayAdapter<String> {
 
 		// bind data
 		final String choice = getItem(position);
+		viewHolder.checkbox.setTag(position);
 		viewHolder.checkbox.setText(choice);
-		viewHolder.checkbox.setChecked(selectedChoices.contains(choice));
 		viewHolder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				int selectedPosition = (Integer) compoundButton.getTag();
+				String selectedChoice = getItem(selectedPosition);
 				if (b) {
-					selectedChoices.add(choice);
+					selectedChoices.add(selectedChoice);
 				} else {
-					selectedChoices.remove(choice);
+					selectedChoices.remove(selectedChoice);
 				}
 			}
 		});
 
+		viewHolder.checkbox.setChecked(selectedChoices.contains(choice));
+
 		return convertView;
 	}
 
-	// View lookup cache
+	// View Holder - for caching
 	private static class ViewHolder {
 		CheckBox checkbox;
 	}
@@ -72,4 +85,5 @@ public class QuestionItemAdapter extends ArrayAdapter<String> {
 	public HashSet<String> selectedAnswers() {
 		return selectedChoices;
 	}
+
 }

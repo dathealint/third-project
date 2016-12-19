@@ -16,6 +16,7 @@ public class Question {
 	private String questionText;
 	private Type type;
 	private ArrayList<String> choices;
+	private HashSet<String> answers;
 
 	public Question(int iQuestionId, String sQuestion, String sType, String sChoices, String sAnswers) {
 		this.questionId = iQuestionId;
@@ -55,12 +56,6 @@ public class Question {
 		this.type = type;
 	}
 
-	public void setAnswers(HashSet<String> answers) {
-		this.answers = answers;
-	}
-
-	private HashSet<String> answers;
-
 	public ArrayList<String> getChoices() {
 		return choices;
 	}
@@ -69,22 +64,24 @@ public class Question {
 		this.choices = choices;
 	}
 
-	// inner class
+	public HashSet<String> getAnswers() {
+		return answers;
+	}
 
+	public void setAnswers(HashSet<String> answers) {
+		this.answers = answers;
+	}
+
+	// inner class
 	public enum Type {
-		MULTIPLE("multiple"),
-		SINGLE("single"),
-		INPUT("input");
+		MULTIPLE(Constants.QUIZ_QUESTION_TYPE_MULTIPLE),
+		SINGLE(Constants.QUIZ_QUESTION_TYPE_SINGLE),
+		INPUT(Constants.QUIZ_QUESTION_TYPE_INPUT);
 
 		private String value;
 
 		Type(String typeValue) {
 			this.value = typeValue;
-		}
-
-		public void setTypeValue(String typeValue) {
-			this.value = typeValue;
-
 		}
 
 		public static Type getTypeEnumByStringValue(String typeValue) {
@@ -93,23 +90,23 @@ public class Question {
 					return type;
 				}
 			}
-
 			return INPUT;
 		}
 
 	}
 
 	public boolean isCorrectAnswer(HashSet<String> answers) {
+		if (answers == null) {
+			return false;
+		}
 
 		if (type.equals(Question.Type.MULTIPLE)) {
-
 			return answers.equals(this.answers);
 		} else if (type.equals(Question.Type.SINGLE)) {
 			return answers.equals(this.answers);
 		} else if (type.equals(Question.Type.INPUT)) {
 			return answers.equals(this.answers);
 		}
-
 		return false;
 	}
 

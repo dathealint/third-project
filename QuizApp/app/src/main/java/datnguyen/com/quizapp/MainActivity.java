@@ -48,11 +48,9 @@ public class MainActivity extends AppCompatActivity {
 	private Button			btnNext = null;
 	private Button			btnWatchAnswers = null;
 
-
     ArrayList<Question>     questions = new ArrayList<>();
     private     int         currentIndex = 0;
 	private     int         correctAnswer = 0;
-
 	private     boolean     watchAnswersMode;
 
 	QuestionItemAdapter 	adapter;
@@ -122,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
 		return jsonContent;
 	}
 
+	/***
+	 * Load questions from local json file and pass to Question object
+	 */
     private void loadJSONQuestions() {
 		String jsonString = stringFromFile(FILE_JSON);
 
@@ -147,9 +148,11 @@ public class MainActivity extends AppCompatActivity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
 	}
 
+	/***
+	 * reset counter and start quiz by showing first question
+	 */
 	private void startQuiz() {
 		// reload content
 		currentIndex = 0;
@@ -157,12 +160,10 @@ public class MainActivity extends AppCompatActivity {
 		displayQuestion(currentIndex);
 	}
 
-	private void onClickWatchAnswers() {
-		watchAnswersMode = true;
-		// go home, reset value
-		startQuiz();
-	}
-
+	/***
+	 * clear checked/text input in screen when switch to another question
+	 * still have some issue with ListView with Checkbox, not uncheck immediately after call this method
+	 */
 	private void resetViewData() {
 		// clear current answer
 		adapter.setChoices(null);
@@ -170,6 +171,12 @@ public class MainActivity extends AppCompatActivity {
 		adapter.notifyDataSetChanged();
 		radioGroupChoices.clearCheck();
 		txtInput.setText("");
+	}
+
+	private void onClickWatchAnswers() {
+		watchAnswersMode = true;
+		// go home, reset value
+		startQuiz();
 	}
 
 	private void onClickNext() {
@@ -203,6 +210,11 @@ public class MainActivity extends AppCompatActivity {
 		}
     }
 
+	/***
+	 * get current selected answer(s) (for SINGLE/MULTIPLE type question),
+	 * or text input (for INPUT type question)
+	 * @return a HashSet contains selected answer(s)
+	 */
 	private HashSet<String> currentAnswers() {
 		HashSet<String> answers = null;
 		try {
@@ -227,6 +239,10 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	/***
+	 * display question for specified index
+	 * @param index: index of question in question list
+	 */
     private void displayQuestion(int index) {
 		// check if this question is using checkbox or radio box or input
 		if (index >= questions.size()) {
@@ -272,6 +288,10 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	/***
+	 * load data and show question for CheckBoxes (MULTIPLE) type
+	 * @param choices list of provided choices. Each choice represents a Checkbox
+	 */
 	private void loadDataCheckboxes(ArrayList<String> choices) {
 		adapter.setChoices(choices);
 
@@ -286,6 +306,11 @@ public class MainActivity extends AppCompatActivity {
 		adapter.notifyDataSetChanged();
 	}
 
+	/***
+	 * load data and show question for radiogroup (SINGLE) type
+	 * Will auto selected answer if is in watch answers mode
+	 * @param choices list of provided choices. Each choice represents a radio button
+	 */
 	private void loadDataRadioGroup(ArrayList<String> choices) {
 		radioGroupChoices.clearCheck();
 		radioGroupChoices.removeAllViews();
@@ -311,6 +336,11 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	/***
+	 * load text and show question for INPUT type
+	 * * Will auto fill text answer if is in watch answers mode
+	 * @param text : result to display if in watch answer mode
+	 */
 	private void loadDataTextInput(String text) {
 		if (watchAnswersMode) {
 			txtInput.setText(text);

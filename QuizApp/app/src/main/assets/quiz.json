@@ -1,0 +1,52 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the name of Draco Malfoy's son?",
+      "choices": "Scorpius{-}Lucius{-}Diego{-}Severus{-}Dane",
+      "type":"single",
+      "correct": "Scorpius"
+    },
+    {
+      "id": 2,
+      "question": "What creature does Dumbledore have as a pet?",
+      "choices": "Efreet{-}Fey{-}Troll{-}Phoenix{-}Basilisk",
+      "type":"single",
+      "correct": "Phoenix"
+    },
+    {
+      "id": 3,
+      "question": "What is Voldemort's final horcrux?",
+      "choices": "A mirror{-}A snake{-}A brooch{-}Harry Potter{-}A violin",
+      "type":"single",
+      "correct": "A snake"
+    },
+    {
+      "id": 4,
+      "question": "Who takes over as headmaster of Hogwarts after Dumbledore's death?",
+      "choices": "Voldemort{-}Narcissa Black{-}Professor Trelawny{-}Delores Umbridge{-}Professor Snape",
+      "type":"single",
+      "correct": "Professor Snape"
+    },
+    {
+      "id": 5,
+      "question": "Who killed Deatheater Antonin Dolohov during the Battle of Hogwarts?",
+      "choices": "Professor Flitwick{-}Ron Weasley{-}Hermione Granger",
+      "type":"single",
+      "correct": "Professor Flitwick"
+    },
+    {
+      "id": 6,
+      "question": "Who play(s) as chaser on the Irish international Quidditch team?",
+      "choices": "Quidgely{-}Mullet{-}Moran{-}Hermione Granger{-}Troy",
+      "type":"multiple",
+      "correct": "Mullet{-}Moran{-}Troy"
+    },
+    {
+      "id": 7,
+      "question": "What is the first name of J.K.Rowling's mother?",
+      "type":"input",
+      "correct": "anne"
+    }
+  ]
+}

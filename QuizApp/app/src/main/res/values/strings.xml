@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Harry Porter Quiz</string>
+    <string name="btn_Next">Next</string>
+    <string name="btn_Finish">Finish</string>
+    <string name="btn_TryAgain">Try Again</string>
+    <string name="txt_completed">Congrats! Here is your result:</string>
+
+</resources>
